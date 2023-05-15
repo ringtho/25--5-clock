@@ -47,7 +47,9 @@ const Timer = ({ timer }) => {
     <>
     <div className='timer'>
         <h4 id='timer-label'>Session</h4>
-        <p id='time-left'>{!play && !clockPaused ? `${timer.sessionTime}: 00` : display }</p>
+        <p id='time-left'>
+          {!play && !clockPaused ? `${timer.sessionTime}:00` : display }
+        </p>
     </div>
     <div className='timer-control'>
     <div className='pause-play'>
