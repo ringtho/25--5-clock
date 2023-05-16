@@ -1,8 +1,17 @@
 import React, { useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 
-const SessionLength = ({ timer, setTimer, setTotalTime }) => {
+const SessionLength = (props) => {
+  const {
+    timer,
+    setTimer,
+    setTotalTime,
+    setSessionTime,
+    sessionTime,
+    isBreak
+  } = props
   const sessionRef = useRef()
+
   const decrementSession = () => {
     setTimer(prev => {
       if (prev.sessionTime > 1 && prev.breakTime <= 60) {
@@ -28,8 +37,10 @@ const SessionLength = ({ timer, setTimer, setTotalTime }) => {
   }
 
   useEffect(() => {
-    const sessionTime = sessionRef.current?.innerText
-    setTotalTime(sessionTime * 60)
+    setSessionTime(sessionRef.current?.innerText)
+    if (!isBreak) {
+      setTotalTime(sessionTime * 60)
+    }
   })
 
   return (
@@ -40,7 +51,9 @@ const SessionLength = ({ timer, setTimer, setTotalTime }) => {
         className='fa fa-arrow-down'
         id='session-decrement'
         onClick={decrementSession}></i>
-        <div id='session-length' ref={sessionRef}>{timer.sessionTime}</div>
+        <div id='session-length' ref={sessionRef}>
+          {timer.sessionTime}
+        </div>
         <i
         className='fa fa-arrow-up'
         id='session-increment'
@@ -53,7 +66,10 @@ const SessionLength = ({ timer, setTimer, setTotalTime }) => {
 SessionLength.propTypes = {
   timer: PropTypes.object,
   setTimer: PropTypes.func,
-  setTotalTime: PropTypes.func
+  setTotalTime: PropTypes.func,
+  sessionTime: PropTypes.number,
+  setSessionTime: PropTypes.func,
+  isBreak: PropTypes.bool
 }
 
 export default SessionLength

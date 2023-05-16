@@ -1,7 +1,17 @@
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
 
-const BreakLength = ({ timer, setTimer }) => {
+const BreakLength = (props) => {
+  const {
+    timer,
+    setTimer,
+    isBreak,
+    setBreakTime,
+    breakTime,
+    setTotalTime
+  } = props
+  const breakRef = useRef()
+
   const decrementBreak = () => {
     setTimer(prev => {
       if (prev.breakTime > 1 && prev.breakTime <= 60) {
@@ -26,6 +36,13 @@ const BreakLength = ({ timer, setTimer }) => {
     })
   }
 
+  useEffect(() => {
+    setBreakTime(breakRef.current?.innerText)
+    if (isBreak) {
+      setTotalTime(breakTime * 60)
+    }
+  })
+
   return (
         <div className='break-length'>
             <h3 id='break-label'>Break Length</h3>
@@ -34,7 +51,7 @@ const BreakLength = ({ timer, setTimer }) => {
             className='fa fa-arrow-down'
             id='break-decrement'
             onClick={decrementBreak}></i>
-            <div id='break-length'>{timer.breakTime}</div>
+            <div id='break-length' ref={breakRef}>{timer.breakTime}</div>
             <i
             className='fa fa-arrow-up'
             id='break-increment'
@@ -46,7 +63,11 @@ const BreakLength = ({ timer, setTimer }) => {
 
 BreakLength.propTypes = {
   timer: PropTypes.object,
-  setTimer: PropTypes.func
+  setTimer: PropTypes.func,
+  isBreak: PropTypes.bool,
+  setBreakTime: PropTypes.func,
+  breakTime: PropTypes.number,
+  setTotalTime: PropTypes.any
 }
 
 export default BreakLength

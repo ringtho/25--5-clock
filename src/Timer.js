@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 
-const Timer = ({ timer, setTimer, totalTime, setTotalTime }) => {
+const Timer = ({ timer, setTimer, totalTime, setTotalTime, setIsBreak, isBreak }) => {
   const [display, setDisplay] = useState(`${totalTime / 60}:00`)
   const [secsFromInitialStart, setSecsFromInitialStart] = useState(0)
   const [clock, setClock] = useState()
@@ -29,7 +29,9 @@ const Timer = ({ timer, setTimer, totalTime, setTotalTime }) => {
   }
   useEffect(() => {
     if (Number(secsFromInitialStart) === Number(totalTime)) {
-      stopClockFn()
+      clearInterval(clock)
+      // setIsBreak(prev => !prev)
+      // startClockFn()
     }
   }, [secsFromInitialStart])
 
@@ -39,22 +41,21 @@ const Timer = ({ timer, setTimer, totalTime, setTotalTime }) => {
       breakTime: 5,
       sessionTime: 25
     })
-    setClockPaused(false)
     setPlay(false)
     setTotalTime(timer.sessionTime * 60)
+    setDisplay(`${totalTime / 60}:00`)
   }
   const pauseClockFn = () => {
     setClockPaused(true)
     clearInterval(clock)
     setPlay(false)
-    console.log(`Pause Clock: ${clock}`)
   }
-  console.log(`Normal Clock: ${clock}`)
   return (
     <>
     <div className='timer'>
-        <h4 id='timer-label'>Session</h4>
+        <h4 id='timer-label'>{ isBreak ? 'Break Time' : 'Session'}</h4>
         <p id='time-left'>
+          {/* {display } */}
           {!play && !clockPaused ? `${totalTime / 60}:00` : display }
         </p>
     </div>
@@ -70,6 +71,11 @@ const Timer = ({ timer, setTimer, totalTime, setTotalTime }) => {
         <i className='fa fa-refresh' id='reset' onClick={stopClockFn}></i>
     </div>
     </div>
+    <audio
+      id='beep'
+      preload='auto'
+      src='https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav'>
+    </audio>
     </>
   )
 }
@@ -78,7 +84,9 @@ Timer.propTypes = {
   timer: PropTypes.object,
   totalTime: PropTypes.number,
   setTimer: PropTypes.func,
-  setTotalTime: PropTypes.func
+  setTotalTime: PropTypes.func,
+  setIsBreak: PropTypes.func,
+  isBreak: PropTypes.bool
 }
 
 export default Timer
