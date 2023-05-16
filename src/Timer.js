@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 
-const Timer = ({ timer }) => {
-  const countDownDeadline = timer.sessionTime * 60
-  const [display, setDisplay] = useState(`${timer.sessionTime}:00`)
-  const [totalTime] = useState(countDownDeadline)
+const Timer = ({ timer, setTimer, totalTime, setTotalTime }) => {
+  const [display, setDisplay] = useState(`${totalTime / 60}:00`)
   const [secsFromInitialStart, setSecsFromInitialStart] = useState(0)
   const [clock, setClock] = useState()
   const [clockPaused, setClockPaused] = useState(false)
@@ -37,26 +35,35 @@ const Timer = ({ timer }) => {
 
   const stopClockFn = () => {
     clearInterval(clock)
+    setTimer({
+      breakTime: 5,
+      sessionTime: 25
+    })
+    setClockPaused(false)
+    setPlay(false)
+    setTotalTime(timer.sessionTime * 60)
   }
   const pauseClockFn = () => {
     setClockPaused(true)
     clearInterval(clock)
     setPlay(false)
+    console.log(`Pause Clock: ${clock}`)
   }
+  console.log(`Normal Clock: ${clock}`)
   return (
     <>
     <div className='timer'>
         <h4 id='timer-label'>Session</h4>
         <p id='time-left'>
-          {!play && !clockPaused ? `${timer.sessionTime}:00` : display }
+          {!play && !clockPaused ? `${totalTime / 60}:00` : display }
         </p>
     </div>
     <div className='timer-control'>
     <div className='pause-play'>
         {
         play
-          ? <i className='fa fa-pause' id='start-stop' onClick={pauseClockFn}></i>
-          : <i className='fa fa-play' id='start-stop' onClick={startClockFn}></i>
+          ? <i className='fa fa-pause' id='start_stop' onClick={pauseClockFn}></i>
+          : <i className='fa fa-play' id='start_stop' onClick={startClockFn}></i>
         }
     </div>
     <div className='refresh'>
@@ -68,7 +75,10 @@ const Timer = ({ timer }) => {
 }
 
 Timer.propTypes = {
-  timer: PropTypes.number
+  timer: PropTypes.object,
+  totalTime: PropTypes.number,
+  setTimer: PropTypes.func,
+  setTotalTime: PropTypes.func
 }
 
 export default Timer

@@ -45,7 +45,7 @@ const BreakLength = ({ timer, setTimer }) => {
 }
 
 BreakLength.propTypes = {
-  timer: PropTypes.number,
+  timer: PropTypes.object,
   setTimer: PropTypes.func
 }
 
