@@ -30,8 +30,8 @@ const Timer = ({ timer, setTimer, totalTime, setTotalTime, setIsBreak, isBreak }
   useEffect(() => {
     if (Number(secsFromInitialStart) === Number(totalTime)) {
       clearInterval(clock)
-      // setIsBreak(prev => !prev)
-      // startClockFn()
+      setIsBreak(prev => !prev)
+      startClockFn()
     }
   }, [secsFromInitialStart])
 
@@ -44,6 +44,7 @@ const Timer = ({ timer, setTimer, totalTime, setTotalTime, setIsBreak, isBreak }
     setPlay(false)
     setTotalTime(timer.sessionTime * 60)
     setDisplay(`${totalTime / 60}:00`)
+    setIsBreak(false)
   }
   const pauseClockFn = () => {
     setClockPaused(true)
