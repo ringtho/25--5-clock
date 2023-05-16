@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 
 const Timer = ({ timer, setTimer, totalTime, setTotalTime, setIsBreak, isBreak }) => {
@@ -7,6 +7,7 @@ const Timer = ({ timer, setTimer, totalTime, setTotalTime, setIsBreak, isBreak }
   const [clock, setClock] = useState()
   const [clockPaused, setClockPaused] = useState(false)
   const [play, setPlay] = useState(false)
+  const audioEl = useRef()
 
   const startClockFn = () => {
     setPlay(true)
@@ -26,6 +27,7 @@ const Timer = ({ timer, setTimer, totalTime, setTotalTime, setIsBreak, isBreak }
       const secs = (current % 60).toString().padStart(2, '0')
       setDisplay(`${mins}:${secs}`)
     }, 1000))
+    audioEl.current.play()
   }
   useEffect(() => {
     if (Number(secsFromInitialStart) === Number(totalTime)) {
@@ -45,6 +47,8 @@ const Timer = ({ timer, setTimer, totalTime, setTotalTime, setIsBreak, isBreak }
     setTotalTime(timer.sessionTime * 60)
     setDisplay(`${totalTime / 60}:00`)
     setIsBreak(false)
+    audioEl.current.pause()
+    audioEl.current.currentTime = 0
   }
   const pauseClockFn = () => {
     setClockPaused(true)
@@ -73,6 +77,7 @@ const Timer = ({ timer, setTimer, totalTime, setTotalTime, setIsBreak, isBreak }
     </div>
     </div>
     <audio
+      ref={audioEl}
       id='beep'
       preload='auto'
       src='https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav'>
