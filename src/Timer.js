@@ -1,50 +1,68 @@
 import React, { useRef, useState } from 'react'
 import PropTypes from 'prop-types'
+import alarm from './media/beep.wav'
 
 const Timer = ({ timer, setTimer }) => {
-  const [isBreak] = useState(false)
-  const audioEl = useRef()
-
   const [clock, setClock] = useState()
   const [pausedTime, setPausedTime] = useState()
-
-  console.log(pausedTime)
+  const audioEl = useRef()
 
   const start = () => {
+    setTimer(prev => {
+      return { ...prev, isTimerOn: true, isBreak: false }
+    })
     const currentTime = Date.now()
     let time
     if (timer.isPaused) {
       const pausedMins = pausedTime.mins * 60 * 1000
       const pausedSecs = pausedTime.secs * 1000
       time = pausedMins + pausedSecs + currentTime
-      console.log(time)
     } else {
-      const setTime = !isBreak
+      const setTime = !timer.isBreak
         ? timer.sessionTime * 60 * 1000
         : timer.breakTime * 60 * 1000
       time = currentTime + setTime
-      console.log(time)
     }
     const clock = setInterval(() => {
       const secondsLeft = Math.round((time - Date.now()) / 1000)
-      console.log(secondsLeft)
-      if (secondsLeft === 3 && secondsLeft >= 0) {
+      if (secondsLeft >= 0 && secondsLeft <= 4) {
         audioEl.current.play()
-      } else if (secondsLeft < 0) {
+      } else if (secondsLeft <= 0) {
         clearInterval(clock)
-        // setTimer()
+        breakFn()
       }
       getDisplayFormat(secondsLeft)
-      setTimer(prev => (
-        {
-          ...prev,
-          isBreak: false,
-          isTimerOn: true,
-          isPaused: false
-        }
-      ))
     }, 1000)
     setClock(clock)
+    console.log(timer.isBreak)
+  }
+
+  const breakFn = () => {
+    setTimer(prev => {
+      return { ...prev, isTimerOn: true, isBreak: true }
+    })
+    const currentTime = Date.now()
+    let time
+    if (timer.isPaused) {
+      const pausedMins = pausedTime.mins * 60 * 1000
+      const pausedSecs = pausedTime.secs * 1000
+      time = pausedMins + pausedSecs + currentTime
+    } else {
+      const setTime = timer.breakTime * 60 * 1000
+      time = currentTime + setTime
+    }
+    const clock = setInterval(() => {
+      const secondsLeft = Math.round((time - Date.now()) / 1000)
+      if (secondsLeft >= 0 && secondsLeft <= 4) {
+        audioEl.current.play()
+      } else if (secondsLeft <= 0) {
+        clearInterval(clock)
+        start()
+      }
+      getDisplayFormat(secondsLeft)
+    }, 1000)
+    setClock(clock)
+    console.log(timer.isBreak)
   }
 
   const pause = () => {
@@ -78,8 +96,14 @@ const Timer = ({ timer, setTimer }) => {
   }
 
   const getDisplayFormat = (seconds) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = Math.floor(seconds % 60)
+    let mins = Math.floor(seconds / 60)
+    let secs = Math.floor(seconds % 60)
+    if (mins < 10) {
+      mins = `0${mins}`
+    }
+    if (secs < 10) {
+      secs = `0${secs}`
+    }
     setTimer(prev => {
       return {
         ...prev,
@@ -92,7 +116,7 @@ const Timer = ({ timer, setTimer }) => {
   return (
     <>
     <div className='timer'>
-        <h4 id='timer-label'>{ isBreak ? 'Break Time' : 'Session'}</h4>
+        <h4 id='timer-label'>{ timer.isBreak ? 'Break Time' : 'Session'}</h4>
         <p id='time-left'>
           {timer.mins}:{timer.secs}
         </p>
@@ -113,7 +137,7 @@ const Timer = ({ timer, setTimer }) => {
       ref={audioEl}
       id='beep'
       preload='auto'
-      src='https://raw.githubusercontent.com/freeCodeCamp/cdn/master/build/testable-projects-fcc/audio/BeepSound.wav'>
+      src={alarm}>
     </audio>
     </>
   )

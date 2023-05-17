@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-// import BreakLength from './BreakLength'
+import BreakLength from './BreakLength'
 import SessionLength from './SessionLength'
 import Timer from './Timer'
 
@@ -18,7 +18,10 @@ function App () {
     <div className="app">
       <h1>25 + 5 clock</h1>
       <div className='length-container'>
-        {/* <BreakLength /> */}
+        <BreakLength
+          timer={timer}
+          setTimer={setTimer}
+        />
         <SessionLength
           timer={timer}
           setTimer={setTimer}
