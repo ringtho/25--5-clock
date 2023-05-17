@@ -1,47 +1,34 @@
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 
-const SessionLength = (props) => {
-  const {
-    timer,
-    setTimer,
-    setTotalTime,
-    setSessionTime,
-    sessionTime,
-    isBreak
-  } = props
-  const sessionRef = useRef()
-
-  const decrementSession = () => {
-    setTimer(prev => {
-      if (prev.sessionTime > 1 && prev.breakTime <= 60) {
+const SessionLength = ({ timer, setTimer }) => {
+  const increment = () => {
+    if (timer.sessionTime < 60 && !timer.isTimerOn) {
+      setTimer(prev => {
         return {
-          ...prev, sessionTime: prev.sessionTime - 1
+          ...prev,
+          sessionTime: prev.sessionTime + 1,
+          mins: prev.sessionTime + 1
         }
-      } else {
-        return prev
-      }
-    })
-  }
-
-  const incrementSession = () => {
-    setTimer(prev => {
-      if (prev.sessionTime > 0 && prev.sessionTime < 60) {
-        return {
-          ...prev, sessionTime: prev.sessionTime + 1
-        }
-      } else {
-        return prev
-      }
-    })
-  }
-
-  useEffect(() => {
-    setSessionTime(sessionRef.current?.innerText)
-    if (!isBreak) {
-      setTotalTime(sessionTime * 60)
+      })
+    } else {
+      return timer
     }
-  })
+  }
+
+  const decrement = () => {
+    if (timer.sessionTime > 1 && !timer.isTimerOn) {
+      setTimer(prev => {
+        return {
+          ...prev,
+          sessionTime: prev.sessionTime - 1,
+          mins: prev.sessionTime - 1
+        }
+      })
+    } else {
+      return timer
+    }
+  }
 
   return (
     <div className='session-length'>
@@ -50,14 +37,16 @@ const SessionLength = (props) => {
         <i
         className='fa fa-arrow-down'
         id='session-decrement'
-        onClick={decrementSession}></i>
-        <div id='session-length' ref={sessionRef}>
+        onClick={decrement}
+        ></i>
+        <div id='session-length'>
           {timer.sessionTime}
         </div>
         <i
         className='fa fa-arrow-up'
         id='session-increment'
-        onClick={incrementSession}></i>
+        onClick={increment}
+        ></i>
         </div>
     </div>
   )
@@ -65,11 +54,7 @@ const SessionLength = (props) => {
 
 SessionLength.propTypes = {
   timer: PropTypes.object,
-  setTimer: PropTypes.func,
-  setTotalTime: PropTypes.func,
-  sessionTime: PropTypes.number,
-  setSessionTime: PropTypes.func,
-  isBreak: PropTypes.bool
+  setTimer: PropTypes.func
 }
 
 export default SessionLength
