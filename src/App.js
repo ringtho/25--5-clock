@@ -8,6 +8,8 @@ function App () {
     breakTime: 5,
     sessionTime: 25,
     isTimerOn: false,
+    isBreak: false,
+    isPaused: false,
     mins: '25',
     secs: '00'
   })
@@ -24,6 +26,7 @@ function App () {
       </div>
       <Timer
         timer={timer}
+        setTimer={setTimer}
       />
       <div className='footer'>
         <p className='coded-by'>Designed and coded by</p>

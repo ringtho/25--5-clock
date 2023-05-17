@@ -1,89 +1,93 @@
 import React, { useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 
-const Timer = ({ timer }) => {
-  // const [display, setDisplay] = useState(`${totalTime / 60}:00`)
-  // const [secsFromInitialStart, setSecsFromInitialStart] = useState(0)
-  // const [clock, setClock] = useState()
-  // const [clockPaused, setClockPaused] = useState(false)
-
+const Timer = ({ timer, setTimer }) => {
   const [isBreak] = useState(false)
   const audioEl = useRef()
 
-  // const startClockFn = () => {
-  //   setPlay(true)
-  //   const start = new Date()
-  //   let secsFromLastPaused = 0
-  //   if (clockPaused) {
-  //     secsFromLastPaused += secsFromInitialStart
-  //     setClockPaused(false)
-  //   }
-  //   setClock(setInterval(() => {
-  //     let current
-  //     current = Number(((new Date() - start) / 1000).toFixed())
-  //     current += secsFromLastPaused
-  //     setSecsFromInitialStart(current)
-  //     current = totalTime - current
-  //     const mins = (current / 60).toString().split('.')[0].padStart(2, '0')
-  //     const secs = (current % 60).toString().padStart(2, '0')
-  //     setDisplay(`${mins}:${secs}`)
-  //   }, 1000))
-  //   audioEl.current.play()
-  // }
-  // useEffect(() => {
-  //   if (Number(secsFromInitialStart) === Number(totalTime)) {
-  //     clearInterval(clock)
-  //     setIsBreak(prev => !prev)
-  //     startClockFn()
-  //   }
-  // }, [secsFromInitialStart])
-
-  // const stopClockFn = () => {
-  //   clearInterval(clock)
-  //   setTimer({
-  //     breakTime: 5,
-  //     sessionTime: 25
-  //   })
-  //   setPlay(false)
-  //   setTotalTime(timer.sessionTime * 60)
-  //   setDisplay(`${totalTime / 60}:00`)
-  //   setIsBreak(false)
-  //   audioEl.current.pause()
-  //   audioEl.current.currentTime = 0
-  // }
-  // const pauseClockFn = () => {
-  //   setClockPaused(true)
-  //   clearInterval(clock)
-  //   setPlay(false)
-  // }
-  // const [secondsLeft, setSecondsLeft] = useState(timer.sessionTime * 60)
   const [clock, setClock] = useState()
+  const [pausedTime, setPausedTime] = useState()
+
+  console.log(pausedTime)
 
   const start = () => {
     const currentTime = Date.now()
-    const setTime = timer.sessionTime * 60 * 1000
-    const time = currentTime + setTime
+    let time
+    if (timer.isPaused) {
+      const pausedMins = pausedTime.mins * 60 * 1000
+      const pausedSecs = pausedTime.secs * 1000
+      time = pausedMins + pausedSecs + currentTime
+      console.log(time)
+    } else {
+      const setTime = !isBreak
+        ? timer.sessionTime * 60 * 1000
+        : timer.breakTime * 60 * 1000
+      time = currentTime + setTime
+      console.log(time)
+    }
     const clock = setInterval(() => {
       const secondsLeft = Math.round((time - Date.now()) / 1000)
       console.log(secondsLeft)
       if (secondsLeft === 3 && secondsLeft >= 0) {
         audioEl.current.play()
-      } else if (secondsLeft === 0) {
+      } else if (secondsLeft < 0) {
         clearInterval(clock)
+        // setTimer()
       }
+      getDisplayFormat(secondsLeft)
+      setTimer(prev => (
+        {
+          ...prev,
+          isBreak: false,
+          isTimerOn: true,
+          isPaused: false
+        }
+      ))
     }, 1000)
     setClock(clock)
   }
 
-  // useEffect(() => {
-  //   if (secondsLeft === 0) {
-  //     clearInterval(clock)
-  //   }
-  // }, [secondsLeft, clock])
-  // useEffect(() => {
-  //   return () => clearInterval(clock)
-  // }, [clock])
-  // console.log(secondsLeft)
+  const pause = () => {
+    clearInterval(clock)
+    setPausedTime({ mins: timer.mins, secs: timer.secs })
+    setTimer(prev => {
+      return {
+        ...prev,
+        isTimerOn: false,
+        isPaused: true
+      }
+    })
+  }
+
+  const reset = () => {
+    clearInterval(clock)
+    audioEl.current.pause()
+    audioEl.current.currentTime = 0
+    setTimer(prev => {
+      return {
+        ...prev,
+        breakTime: 5,
+        sessionTime: 25,
+        isTimerOn: false,
+        isBreak: false,
+        isPaused: false,
+        mins: '25',
+        secs: '00'
+      }
+    })
+  }
+
+  const getDisplayFormat = (seconds) => {
+    const mins = Math.floor(seconds / 60)
+    const secs = Math.floor(seconds % 60)
+    setTimer(prev => {
+      return {
+        ...prev,
+        mins,
+        secs
+      }
+    })
+  }
 
   return (
     <>
@@ -97,12 +101,12 @@ const Timer = ({ timer }) => {
     <div className='pause-play'>
         {
         timer.isTimerOn
-          ? <i className='fa fa-pause' id='start_stop'></i>
+          ? <i className='fa fa-pause' id='start_stop' onClick={pause}></i>
           : <i className='fa fa-play' id='start_stop' onClick={start}></i>
         }
     </div>
     <div className='refresh'>
-        <i className='fa fa-refresh' id='reset'></i>
+        <i className='fa fa-refresh' id='reset' onClick={reset}></i>
     </div>
     </div>
     <audio
@@ -116,7 +120,8 @@ const Timer = ({ timer }) => {
 }
 
 Timer.propTypes = {
-  timer: PropTypes.object
+  timer: PropTypes.object,
+  setTimer: PropTypes.func
 }
 
 export default Timer
