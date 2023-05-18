@@ -33,45 +33,47 @@ const Timer = ({ timer, setTimer }) => {
       console.log(secondsLeft)
       if (secondsLeft >= 0 && secondsLeft <= 4) {
         audioEl.current.play()
-      } else if (secondsLeft <= 0) {
+      }
+      if (secondsLeft < 1) {
         console.log('Transitioning to Break....')
         clearInterval(clock)
-        // breakFn()
+        breakFn()
       }
       getDisplayFormat(secondsLeft)
     }, 1000)
     setClock(clock)
   }
 
-  // const breakFn = () => {
-  //   if (!timer.isTimerOn) {
-  //     setTimer(prev => {
-  //       return {
-  //         ...prev,
-  //         isTimerOn: true,
-  //         isBreak: true,
-  //         mins: prev.breakTime,
-  //         secs: '00'
-  //       }
-  //     })
-  //   }
-  //   const currentTime = Date.now()
-  //   const setTime = timer.breakTime * 60 * 1000
-  //   const time = currentTime + setTime
-  //   const clock = setInterval(() => {
-  //     const secondsLeft = Math.round((time - Date.now()) / 1000)
-  //     if (secondsLeft >= 0 && secondsLeft <= 4) {
-  //       audioEl.current.play()
-  //     } else if (secondsLeft < 0) {
-  //       clearInterval(clock)
-  //       console.log('Transitioning to Session.....')
-  //       setTimer(prev => ({ ...prev, isBreak: false }))
-  //       start()
-  //     }
-  //     getDisplayFormat(secondsLeft)
-  //   }, 1000)
-  //   setClock(clock)
-  // }
+  const breakFn = () => {
+    if (!timer.isTimerOn) {
+      setTimer(prev => {
+        return {
+          ...prev,
+          isTimerOn: true,
+          isBreak: true,
+          mins: prev.breakTime,
+          secs: '00'
+        }
+      })
+    }
+    const currentTime = Date.now()
+    const setTime = timer.breakTime * 60 * 1000
+    const time = currentTime + setTime
+    const clock = setInterval(() => {
+      const secondsLeft = Math.round((time - Date.now()) / 1000)
+      if (secondsLeft >= 0 && secondsLeft <= 4) {
+        audioEl.current.play()
+      }
+      if (secondsLeft < 1) {
+        clearInterval(clock)
+        console.log('Transitioning to Session.....')
+        setTimer(prev => ({ ...prev, isBreak: false }))
+        start()
+      }
+      getDisplayFormat(secondsLeft)
+    }, 1000)
+    setClock(clock)
+  }
 
   const pause = () => {
     clearInterval(clock)
