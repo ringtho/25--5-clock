@@ -8,15 +8,22 @@ const Timer = ({ timer, setTimer }) => {
   const audioEl = useRef()
 
   const start = () => {
-    setTimer(prev => {
-      let isBreak
-      if (timer.isBreak) {
-        isBreak = true
-      } else {
-        isBreak = false
-      }
-      return { ...prev, isTimerOn: true, isBreak }
-    })
+    if (timer.isTimerOn) {
+      setTimer(prev => {
+        let isBreak
+        if (timer.isBreak) {
+          isBreak = true
+        } else {
+          isBreak = false
+        }
+        return { ...prev, isTimerOn: true, isBreak }
+      })
+    } else {
+      setTimer(prev => ({
+        ...prev,
+        isTimerOn: true
+      }))
+    }
     const currentTime = Date.now()
     let time
     if (timer.isPaused) {
@@ -31,7 +38,7 @@ const Timer = ({ timer, setTimer }) => {
     const clock = setInterval(() => {
       const secondsLeft = Math.round((time - Date.now()) / 1000)
       console.log(secondsLeft)
-      if (secondsLeft >= 0 && secondsLeft <= 4) {
+      if (secondsLeft <= 4) {
         audioEl.current.play()
       }
       if (secondsLeft < 1) {
@@ -61,7 +68,7 @@ const Timer = ({ timer, setTimer }) => {
     const time = currentTime + setTime
     const clock = setInterval(() => {
       const secondsLeft = Math.round((time - Date.now()) / 1000)
-      if (secondsLeft >= 0 && secondsLeft <= 4) {
+      if (secondsLeft <= 4) {
         audioEl.current.play()
       }
       if (secondsLeft < 1) {
