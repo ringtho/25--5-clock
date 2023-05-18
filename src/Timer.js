@@ -32,7 +32,15 @@ const Timer = ({ timer, setTimer }) => {
       time = pausedMins + pausedSecs + currentTime
       setTimer(prev => ({ ...prev, isPaused: false }))
     } else {
-      const setTime = timer.sessionTime * 60 * 1000
+      let sessionTime
+      if (timer.sessionTime < 1) {
+        sessionTime = 1
+      } else if (sessionTime > 60) {
+        sessionTime = 60
+      } else {
+        sessionTime = timer.sessionTime
+      }
+      const setTime = sessionTime * 60 * 1000
       time = currentTime + setTime
     }
     const clock = setInterval(() => {
@@ -64,7 +72,15 @@ const Timer = ({ timer, setTimer }) => {
       })
     }
     const currentTime = Date.now()
-    const setTime = timer.breakTime * 60 * 1000
+    let breakTime
+    if (timer.breakTime < 1) {
+      breakTime = 1
+    } else if (timer.breakTime > 60) {
+      breakTime = 60
+    } else {
+      breakTime = timer.breakTime
+    }
+    const setTime = breakTime * 60 * 1000
     const time = currentTime + setTime
     const clock = setInterval(() => {
       const secondsLeft = Math.round((time - Date.now()) / 1000)
