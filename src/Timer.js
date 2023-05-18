@@ -9,7 +9,13 @@ const Timer = ({ timer, setTimer }) => {
 
   const start = () => {
     setTimer(prev => {
-      return { ...prev, isTimerOn: true, isBreak: false }
+      let isBreak
+      if (timer.isBreak) {
+        isBreak = true
+      } else {
+        isBreak = false
+      }
+      return { ...prev, isTimerOn: true, isBreak }
     })
     const currentTime = Date.now()
     let time
@@ -17,53 +23,55 @@ const Timer = ({ timer, setTimer }) => {
       const pausedMins = pausedTime.mins * 60 * 1000
       const pausedSecs = pausedTime.secs * 1000
       time = pausedMins + pausedSecs + currentTime
+      setTimer(prev => ({ ...prev, isPaused: false }))
     } else {
-      const setTime = !timer.isBreak
-        ? timer.sessionTime * 60 * 1000
-        : timer.breakTime * 60 * 1000
+      const setTime = timer.sessionTime * 60 * 1000
       time = currentTime + setTime
     }
     const clock = setInterval(() => {
       const secondsLeft = Math.round((time - Date.now()) / 1000)
+      console.log(secondsLeft)
       if (secondsLeft >= 0 && secondsLeft <= 4) {
         audioEl.current.play()
       } else if (secondsLeft <= 0) {
+        console.log('Transitioning to Break....')
         clearInterval(clock)
-        breakFn()
+        // breakFn()
       }
       getDisplayFormat(secondsLeft)
     }, 1000)
     setClock(clock)
-    console.log(timer.isBreak)
   }
 
-  const breakFn = () => {
-    setTimer(prev => {
-      return { ...prev, isTimerOn: true, isBreak: true }
-    })
-    const currentTime = Date.now()
-    let time
-    if (timer.isPaused) {
-      const pausedMins = pausedTime.mins * 60 * 1000
-      const pausedSecs = pausedTime.secs * 1000
-      time = pausedMins + pausedSecs + currentTime
-    } else {
-      const setTime = timer.breakTime * 60 * 1000
-      time = currentTime + setTime
-    }
-    const clock = setInterval(() => {
-      const secondsLeft = Math.round((time - Date.now()) / 1000)
-      if (secondsLeft >= 0 && secondsLeft <= 4) {
-        audioEl.current.play()
-      } else if (secondsLeft <= 0) {
-        clearInterval(clock)
-        start()
-      }
-      getDisplayFormat(secondsLeft)
-    }, 1000)
-    setClock(clock)
-    console.log(timer.isBreak)
-  }
+  // const breakFn = () => {
+  //   if (!timer.isTimerOn) {
+  //     setTimer(prev => {
+  //       return {
+  //         ...prev,
+  //         isTimerOn: true,
+  //         isBreak: true,
+  //         mins: prev.breakTime,
+  //         secs: '00'
+  //       }
+  //     })
+  //   }
+  //   const currentTime = Date.now()
+  //   const setTime = timer.breakTime * 60 * 1000
+  //   const time = currentTime + setTime
+  //   const clock = setInterval(() => {
+  //     const secondsLeft = Math.round((time - Date.now()) / 1000)
+  //     if (secondsLeft >= 0 && secondsLeft <= 4) {
+  //       audioEl.current.play()
+  //     } else if (secondsLeft < 0) {
+  //       clearInterval(clock)
+  //       console.log('Transitioning to Session.....')
+  //       setTimer(prev => ({ ...prev, isBreak: false }))
+  //       start()
+  //     }
+  //     getDisplayFormat(secondsLeft)
+  //   }, 1000)
+  //   setClock(clock)
+  // }
 
   const pause = () => {
     clearInterval(clock)
