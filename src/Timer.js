@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react'
 import PropTypes from 'prop-types'
+import { CircularProgress } from '@mui/material'
 import alarm from './media/beep.wav'
 
 const Timer = ({ timer, setTimer }) => {
@@ -148,6 +149,7 @@ const Timer = ({ timer, setTimer }) => {
 
   return (
     <>
+    <CircularProgress value={1000} color='primary' size='10rem' thickness={2} />
     <div className='timer'>
         <h4 id='timer-label'>{ timer.isBreak ? 'Break Time' : 'Session'}</h4>
         <p id='time-left'>
