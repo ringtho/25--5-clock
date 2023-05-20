@@ -1,11 +1,15 @@
 import React, { useRef, useState } from 'react'
 import PropTypes from 'prop-types'
-import { CircularProgress } from '@mui/material'
+import CircularProgress from '@mui/joy/CircularProgress'
 import alarm from './media/beep.wav'
+// import { CircularProgressbar } from 'react-circular-progressbar'
+// import 'react-circular-progressbar/dist/styles.css'
 
 const Timer = ({ timer, setTimer }) => {
   const [clock, setClock] = useState()
   const [pausedTime, setPausedTime] = useState()
+  const [seconds, setSeconds] = useState(0)
+  const [maxTime, setMaxTime] = useState(100)
   const audioEl = useRef()
 
   const start = () => {
@@ -20,6 +24,7 @@ const Timer = ({ timer, setTimer }) => {
         return { ...prev, isTimerOn: true, isBreak }
       })
     } else {
+      setMaxTime(timer.sessionTime * 60)
       setTimer(prev => ({
         ...prev,
         isTimerOn: true
@@ -46,7 +51,7 @@ const Timer = ({ timer, setTimer }) => {
     }
     const clock = setInterval(() => {
       const secondsLeft = Math.round((time - Date.now()) / 1000)
-      console.log(secondsLeft)
+      setSeconds(secondsLeft)
       if (secondsLeft <= 4) {
         audioEl.current.play()
       }
@@ -71,6 +76,7 @@ const Timer = ({ timer, setTimer }) => {
           secs: '00'
         }
       })
+      setMaxTime(timer.breakTime * 60)
     }
     const currentTime = Date.now()
     let breakTime
@@ -85,6 +91,7 @@ const Timer = ({ timer, setTimer }) => {
     const time = currentTime + setTime
     const clock = setInterval(() => {
       const secondsLeft = Math.round((time - Date.now()) / 1000)
+      setSeconds(secondsLeft)
       if (secondsLeft <= 4) {
         audioEl.current.play()
       }
@@ -127,6 +134,7 @@ const Timer = ({ timer, setTimer }) => {
         secs: '00'
       }
     })
+    setSeconds(0)
   }
 
   const getDisplayFormat = (seconds) => {
@@ -147,15 +155,33 @@ const Timer = ({ timer, setTimer }) => {
     })
   }
 
+  const MIN = 0
+  const MAX = maxTime
+  console.log(seconds)
+  const normalise = (value) => ((value - MIN) * 100) / (MAX - MIN)
+  const progress = normalise(seconds)
+  console.log(MAX)
+
   return (
     <>
-    <CircularProgress value={1000} color='primary' size='10rem' thickness={2} />
-    <div className='timer'>
+    <CircularProgress
+      determinate
+      value={progress}
+      color='primary'
+      sx={{
+        '--CircularProgress-size': '400px',
+        '--CircularProgress-trackThickness': '17px',
+        '--CircularProgress-progressThickness': '7px'
+      }}
+      thickness={2}
+    >
+      <div className=''>
         <h4 id='timer-label'>{ timer.isBreak ? 'Break Time' : 'Session'}</h4>
         <p id='time-left'>
           {timer.mins}:{timer.secs}
         </p>
-    </div>
+      </div>
+    </CircularProgress>
     <div className='timer-control'>
     <div className='pause-play'>
         {
