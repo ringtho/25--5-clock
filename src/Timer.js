@@ -2,8 +2,6 @@ import React, { useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import CircularProgress from '@mui/joy/CircularProgress'
 import alarm from './media/beep.wav'
-// import { CircularProgressbar } from 'react-circular-progressbar'
-// import 'react-circular-progressbar/dist/styles.css'
 
 const Timer = ({ timer, setTimer }) => {
   const [clock, setClock] = useState()
