@@ -22,11 +22,16 @@ const Timer = ({ timer, setTimer }) => {
         return { ...prev, isTimerOn: true, isBreak }
       })
     } else {
-      setMaxTime(timer.sessionTime * 60)
       setTimer(prev => ({
         ...prev,
         isTimerOn: true
       }))
+    }
+
+    if (timer.isBreak) {
+      setMaxTime(timer.breakTime * 60)
+    } else {
+      setMaxTime(timer.sessionTime * 60)
     }
     const currentTime = Date.now()
     let time
@@ -54,7 +59,6 @@ const Timer = ({ timer, setTimer }) => {
         audioEl.current.play()
       }
       if (secondsLeft < 1) {
-        console.log('Transitioning to Break....')
         clearInterval(clock)
         breakFn()
       }
@@ -95,7 +99,6 @@ const Timer = ({ timer, setTimer }) => {
       }
       if (secondsLeft < 1) {
         clearInterval(clock)
-        console.log('Transitioning to Session.....')
         setTimer(prev => ({ ...prev, isBreak: false }))
         start()
       }
