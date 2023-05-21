@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import BreakLength from './BreakLength'
-import SessionLength from './SessionLength'
-import Timer from './Timer'
+import BreakLength from './components/BreakLength'
+import SessionLength from './components/SessionLength'
+import Timer from './components/Timer'
 
 function App () {
   const [timer, setTimer] = useState({

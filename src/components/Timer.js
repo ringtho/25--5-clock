@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import CircularProgress from '@mui/joy/CircularProgress'
-import alarm from './media/beep.wav'
+import alarm from '../media/loud-beepy.mp3'
 
 const Timer = ({ timer, setTimer }) => {
   const [clock, setClock] = useState()
@@ -60,6 +60,7 @@ const Timer = ({ timer, setTimer }) => {
       }
       if (secondsLeft < 1) {
         clearInterval(clock)
+        audioEl.current.pause()
         breakFn()
       }
       getDisplayFormat(secondsLeft)
@@ -94,11 +95,12 @@ const Timer = ({ timer, setTimer }) => {
     const clock = setInterval(() => {
       const secondsLeft = Math.round((time - Date.now()) / 1000)
       setSeconds(secondsLeft)
-      if (secondsLeft <= 4) {
+      if (secondsLeft < 4) {
         audioEl.current.play()
       }
       if (secondsLeft < 1) {
         clearInterval(clock)
+        audioEl.current.pause()
         setTimer(prev => ({ ...prev, isBreak: false }))
         start()
       }
