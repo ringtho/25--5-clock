@@ -6,8 +6,8 @@ import alarm from '../media/loud-beepy.mp3'
 const Timer = ({ timer, setTimer }) => {
   const [clock, setClock] = useState()
   const [pausedTime, setPausedTime] = useState()
-  const [seconds, setSeconds] = useState(0)
   const [maxTime, setMaxTime] = useState(100)
+  const [seconds, setSeconds] = useState(0)
   const audioEl = useRef()
 
   const start = () => {
@@ -158,9 +158,9 @@ const Timer = ({ timer, setTimer }) => {
     })
   }
 
+  console.log(seconds)
   const MIN = 0
   const MAX = maxTime
-  console.log(seconds)
   const normalise = (value) => ((value - MIN) * 100) / (MAX - MIN)
   const progress = normalise(seconds)
   console.log(MAX)
@@ -173,17 +173,26 @@ const Timer = ({ timer, setTimer }) => {
       color='primary'
       sx={{
         '--CircularProgress-size': '400px',
-        '--CircularProgress-trackThickness': '17px',
+        '--CircularProgress-trackThickness': '7px',
         '--CircularProgress-progressThickness': '7px'
       }}
-      thickness={2}
     >
+      <CircularProgress
+        determinate
+        value={100}
+        sx={{
+          '--CircularProgress-size': '390px',
+          '--CircularProgress-trackThickness': '2px',
+          '--CircularProgress-progressThickness': '2px'
+        }}
+      >
       <div className=''>
         <h4 id='timer-label'>{ timer.isBreak ? 'Break Time' : 'Session'}</h4>
         <p id='time-left'>
           {timer.mins}:{timer.secs}
         </p>
       </div>
+      </CircularProgress>
     </CircularProgress>
     <div className='timer-control'>
     <div className='pause-play'>

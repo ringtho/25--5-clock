@@ -32,7 +32,7 @@ const SessionLength = ({ timer, setTimer }) => {
 
   return (
     <div className='session-length'>
-        <h3 id='session-label'>Session Length</h3>
+        <h3 id='session-label'>Session</h3>
         <div className='session-buttons'>
         <i
         className='fa fa-arrow-down'

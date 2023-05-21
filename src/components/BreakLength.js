@@ -30,7 +30,7 @@ const BreakLength = ({ timer, setTimer }) => {
 
   return (
         <div className='break-length'>
-            <h3 id='break-label'>Break Length</h3>
+            <h3 id='break-label'>Break</h3>
             <div className='break-buttons'>
             <i
             className='fa fa-arrow-down'
