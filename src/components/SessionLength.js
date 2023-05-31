@@ -40,7 +40,11 @@ const SessionLength = ({ timer, setTimer }) => {
         onClick={decrement}
         ></i>
         <div id='session-length'>
-          {timer.sessionTime}
+          {
+            timer.sessionTime < 10
+              ? `0${timer.sessionTime}`
+              : timer.sessionTime
+          }
         </div>
         <i
         className='fa fa-arrow-up'

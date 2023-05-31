@@ -158,12 +158,10 @@ const Timer = ({ timer, setTimer }) => {
     })
   }
 
-  console.log(seconds)
   const MIN = 0
   const MAX = maxTime
   const normalise = (value) => ((value - MIN) * 100) / (MAX - MIN)
   const progress = normalise(seconds)
-  console.log(MAX)
 
   return (
     <>
@@ -172,27 +170,17 @@ const Timer = ({ timer, setTimer }) => {
       value={progress}
       color='primary'
       sx={{
-        '--CircularProgress-size': '400px',
+        '--CircularProgress-size': '300px',
         '--CircularProgress-trackThickness': '7px',
         '--CircularProgress-progressThickness': '7px'
       }}
     >
-      <CircularProgress
-        determinate
-        value={100}
-        sx={{
-          '--CircularProgress-size': '390px',
-          '--CircularProgress-trackThickness': '2px',
-          '--CircularProgress-progressThickness': '2px'
-        }}
-      >
       <div className=''>
         <h4 id='timer-label'>{ timer.isBreak ? 'Break Time' : 'Session'}</h4>
         <p id='time-left'>
           {timer.mins}:{timer.secs}
         </p>
       </div>
-      </CircularProgress>
     </CircularProgress>
     <div className='timer-control'>
     <div className='pause-play'>

@@ -13,13 +13,6 @@ function App () {
     mins: '25',
     secs: '00'
   })
-  console.log(`breakTime: ${timer.breakTime}`)
-  console.log(`sessionTime: ${timer.sessionTime}`)
-  console.log(`isBreak?: ${timer.isBreak}`)
-  console.log(`isPaused?: ${timer.isPaused}`)
-  console.log(`Time: ${timer.mins}:${timer.secs}`)
-  console.log(typeof timer.mins, typeof timer.secs)
-  console.log(`isTimerOn: ${timer.isTimerOn}`)
 
   return (
     <div className="app">

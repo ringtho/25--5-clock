@@ -36,7 +36,13 @@ const BreakLength = ({ timer, setTimer }) => {
             className='fa fa-arrow-down'
             id='break-decrement'
             onClick={decrement}></i>
-            <div id='break-length'>{timer.breakTime}</div>
+            <div id='break-length'>
+              {
+                timer.breakTime < 10
+                  ? `0${timer.breakTime}`
+                  : timer.breakTime
+              }
+            </div>
             <i
             className='fa fa-arrow-up'
             id='break-increment'
